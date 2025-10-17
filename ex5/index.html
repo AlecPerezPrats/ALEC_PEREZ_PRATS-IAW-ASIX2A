@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Calcula el preu amb IVA</h1>
+        <form action="/ExercicisPHP/ex5/ex5.php" method="GET_or_POST">
+            <label for="preu">Preu:</label>
+            <input type="float" id="preu" name="preu" step="0.01" required><br><br>
+            <label>Selecciona el tipus d'IVA:</label><br>
+            <input type="radio" id="iva21" name="iva" value=21 required>
+            <label for="iva21">21%</label><br>
+            <input type="radio" id="iva10" name="iva" value=10>
+            <label for="iva10">10%</label><br>
+            <input type="radio" id="iva4" name="iva" value=4>
+            <label for="iva4">4%</label><br><br>
+            <input type="submit" value="Calcular">
+        </form>
+    </body>
+</html>
