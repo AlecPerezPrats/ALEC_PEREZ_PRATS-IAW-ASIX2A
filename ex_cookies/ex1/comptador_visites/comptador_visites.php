@@ -1,5 +1,6 @@
 <?php
-    echo"<h1>Tienda de ropa<h1>";
+    echo"<p>Gracias por tu compra<p>";
+    
 
     
 
