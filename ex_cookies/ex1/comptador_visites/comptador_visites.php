@@ -63,15 +63,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
-// ------------------ BLOC 5: SI PORTA MOLTES VISITES SENSE COMPRAR, RESET DE COMPRA ------------------
-// Si després d’una compra han passat diverses visites, podem “permetre-li” tornar a obtenir descomptes
-if ($ha_comprat && $visites >= 5) {
-    // Esborrem la cookie de compra després de 5 visites sense comprar
-    setcookie("ha_comprat", "", time() - 3600, "/");
-    $ha_comprat = false;
-    // No modifiquem la cookie 'visites' — que continuï incrementant
-}
-
 ?>
 
 <!DOCTYPE html>
