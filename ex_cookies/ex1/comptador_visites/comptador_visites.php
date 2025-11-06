@@ -11,16 +11,17 @@ if (isset($_COOKIE['visites'])) {
 // Guardem la cookie de visites (durada 1 any)
 setcookie("visites", $visites, time() + 365*24*60*60, "/");
 
-// ------------------ BLOC 2: COMPROVEM SI JA HA COMPRAT ------------------
+// ------------------ BLOC 2: COMPROVEM SI HA COMPRAT ------------------
 
-// Si l’usuari ja ha comprat alguna vegada (amb o sense descompte)
+// Cookie 'ha_comprat' indica si l’usuari ha fet una compra recent
 $ha_comprat = isset($_COOKIE['ha_comprat']) && $_COOKIE['ha_comprat'] == "1";
 
-// ------------------ BLOC 3: PREPAREM EL MISSATGE D’OFERTA ------------------
+// ------------------ BLOC 3: DETERMINAR MISSATGE D’OFERTA ------------------
 
 $missatge_oferta = "";
 
 if (!$ha_comprat) {
+    // Només s’ofereix descompte si no ha comprat recentment
     if ($visites >= 10) {
         $missatge_oferta = "Oferta exclusiva sols per a tu! Utilitza el codi BOTIGA50 per obtenir un 50% de descompte en les teves primeres compres a la botiga.";
     } elseif ($visites >= 5) {
@@ -37,26 +38,37 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $codi = strtoupper(trim($_POST['descompte'] ?? ""));
 
     if ($ha_comprat) {
-        // Ja ha comprat abans
-        $resultat = "Ja has realitzat una compra prèviament. No pots aplicar més descomptes.";
+        // Si té la cookie ha_comprat = 1, encara no ha passat el "reset" del comptador
+        $resultat = "Ja has comprat recentment. Torna a visitar la web diverses vegades per rebre noves ofertes!";
     } else {
-        // No ha comprat encara
+        // No ha comprat recentment, potser pot aplicar un descompte
         if ($codi === "BOTIGA20" && $visites >= 5 && $visites < 10) {
             $resultat = "Has aplicat correctament el descompte del 20%! Codi: BOTIGA20.";
-            setcookie("ha_comprat", "1", time() + 365*24*60*60, "/");
-            $ha_comprat = true;
         } elseif ($codi === "BOTIGA50" && $visites >= 10) {
             $resultat = "Has aplicat correctament el descompte del 50%! Codi: BOTIGA50.";
-            setcookie("ha_comprat", "1", time() + 365*24*60*60, "/");
-            $ha_comprat = true;
         } elseif ($codi === "") {
             $resultat = "Has comprat el producte <strong>" . htmlspecialchars($producte) . "</strong> sense descompte.";
-            setcookie("ha_comprat", "1", time() + 365*24*60*60, "/");
-            $ha_comprat = true;
         } else {
             $resultat = "Codi de descompte no vàlid o encara no tens dret a aplicar-lo.";
         }
+
+        // Si la compra és vàlida (amb o sense descompte), es considera compra feta
+        if (strpos($resultat, 'Has aplicat') !== false || strpos($resultat, 'sense descompte') !== false) {
+            // Marquem que ha comprat
+            setcookie("ha_comprat", "1", time() + 365*24*60*60, "/");
+            // Reiniciem el comptador de visites (nova etapa)
+            setcookie("visites", "0", time() + 365*24*60*60, "/");
+            $visites = 0;
+        }
     }
+}
+
+// ------------------ BLOC 5: SI PORTA MOLTES VISITES SENSE COMPRAR, RESET DE COMPRA ------------------
+// Si després d’una compra han passat diverses visites, podem “permetre-li” tornar a obtenir descomptes
+if ($ha_comprat && $visites >= 5) {
+    // Esborrem el registre de compra després de 5 visites sense comprar
+    setcookie("ha_comprat", "", time() - 3600, "/"); // Elimina la cookie
+    $ha_comprat = false;
 }
 ?>
 
@@ -65,6 +77,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
     <meta charset="UTF-8">
     <title>Comptador de visites</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; text-align: center; }
+        .contenidor { display: inline-block; padding: 20px; border: 1px solid #ccc; border-radius: 10px; }
+        input { margin: 5px; padding: 8px; }
+        .oferta { background-color: #f0f9ff; border: 1px solid #99d; padding: 10px; margin-top: 10px; border-radius: 6px; }
+        .ok { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+    </style>
 </head>
 <body>
     <div class="contenidor">
@@ -74,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <?php if ($missatge_oferta && !$ha_comprat): ?>
             <div class="oferta"><?= $missatge_oferta ?></div>
         <?php elseif ($ha_comprat): ?>
-            <p class="ok">Gràcies per la teva compra! Ja no s’oferiran més descomptes.</p>
+            <p class="ok">Gràcies per la teva compra! Torna a visitar-nos per obtenir noves ofertes.</p>
         <?php endif; ?>
 
         <form method="post" action="comptador_visites.php">
