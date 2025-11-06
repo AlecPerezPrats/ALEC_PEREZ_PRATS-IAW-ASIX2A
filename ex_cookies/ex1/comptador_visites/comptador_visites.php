@@ -77,14 +77,6 @@ if ($ha_comprat && $visites >= 5) {
 <head>
     <meta charset="UTF-8">
     <title>Comptador de visites</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; text-align: center; }
-        .contenidor { display: inline-block; padding: 20px; border: 1px solid #ccc; border-radius: 10px; }
-        input { margin: 5px; padding: 8px; }
-        .oferta { background-color: #f0f9ff; border: 1px solid #99d; padding: 10px; margin-top: 10px; border-radius: 6px; }
-        .ok { color: green; font-weight: bold; }
-        .error { color: red; font-weight: bold; }
-    </style>
 </head>
 <body>
     <div class="contenidor">
