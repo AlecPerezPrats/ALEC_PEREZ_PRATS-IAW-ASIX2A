@@ -84,9 +84,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <form method="post" action="comptador_visites.php">
             <label for="roba">Quin producte vols?</label><br>
-            <input type="text" id="roba" name="roba" placeholder="Ex: samarreta"><br>
+            <input type="text" id="roba" name="roba"><br>
             <label for="descompte">Introdueix el teu codi de descompte:</label><br>
-            <input type="text" id="descompte" name="descompte" placeholder="Ex: BOTIGA20 o BOTIGA50"><br>
+            <input type="text" id="descompte" name="descompte"><br>
             <input type="submit" value="Comprar">
         </form>
 
