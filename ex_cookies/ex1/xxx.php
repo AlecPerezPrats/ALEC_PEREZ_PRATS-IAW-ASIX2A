@@ -3,42 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Productes</title>
 </head>
 <body>
 
 <h1>Productes</h1>
-<form action="./compra.php" method="GET">
-    <input type="text" name="discount" id=""placeholder="Descompte">
-    <input type="submit" value="Aplicar descompte">
+<form action="" method="GET">
+    <input type="text">
+    <input type="submit" value="Comprar">
 </form>
-<?php   
-    switch($_COOKIE['visita']){
-        case '4':
-            echo "tens un 20% de descompte";
-            break;
-        case '9':
-            if(! isset($_COOKIE['compra'])){
-                echo "tens un 50% de descompte";
-                break;
-            }   
-    }
-?>
 
-<hr>
 <?php
-
 if(isset($_COOKIE['visita'])){
-    $visita = $_COOKIE['visita'];
-    $visita_output = $visita+1;
-    echo "Visita nº $visita_output";
-    setcookie('visita', $visita+=1);
-}
-else{
-    echo "Visita nº: 1";
-    setcookie('visita',1);
+    $visita = intval($_COOKIE['visita']) + 1;
+} else {
+    $visita = 1;
 }
 
+setcookie('visita', $visita, time() + 365*24*60*60, "/");
+
+echo "<p>Visita nº $visita</p>";
+
+if($visita >= 5 && $visita < 10){
+    echo "<p>Tens un 20% de descompte</p>";
+} elseif($visita >= 10 && !isset($_COOKIE['compra'])){
+    echo "<p>Tens un 50% de descompte</p>";
+}
 ?>
+
 </body>
 </html>
